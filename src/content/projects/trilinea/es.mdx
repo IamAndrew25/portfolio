@@ -1,0 +1,31 @@
+<h2 id="problem">El problema</h2>
+
+Un estudio de arquitectura necesita más que una galería: el visitante debe poder explorar un espacio y entender cómo lo transforman los materiales. Los recursos disponibles eran renders de cámara fija, no un modelo 3D completo en tiempo real.
+
+Construí el sitio y su configurador interactivo considerando esas restricciones. Los renders arquitectónicos pertenecen al estudio; mi contribución es el software, la preparación de capas y el diseño de interacción.
+
+<h2 id="decisions">Elegir el nivel adecuado de interacción</h2>
+
+### Componer recursos existentes
+
+El configurador usa capas alineadas y máscaras SVG por superficie. Las diferencias de cámara del comedor requirieron alineación de perspectiva. Las máscaras de primer plano preservan espejos, plantas y muebles.
+
+Es una simulación 2D de cámara fija. Cambia materiales visibles sin recalcular iluminación ni reflejos. Esta decisión permite aprovechar los renders entregados sin necesitar un nuevo proceso de producción 3D.
+
+### Compartir comportamiento, aislar estado
+
+Sala de TV, comedor y sala de estar usan el mismo controlador. Las selecciones se conservan por separado al cambiar de ambiente. El visitante puede comparar con el original y restablecer el ambiente seleccionado.
+
+### Tratar la carga como parte del producto
+
+Los recursos de otros ambientes se cargan a demanda. Las solicitudes pendientes se aíslan; si un ambiente falla, el anterior permanece visible y se puede reintentar. Es parte de la experiencia, no solamente un detalle interno.
+
+<h2 id="validation">Verificar lo que ve el visitante</h2>
+
+El proyecto documenta 32 verificaciones de navegador aprobadas para el configurador de tres ambientes. Cubren navegación, estado independiente, reinicio, comparación, teclado y fallos de carga en escritorio y móvil.
+
+Las comprobaciones visuales revisan los bordes de las máscaras y la preservación de objetos. El sitio también integra un recorrido 360° y formularios de contacto. No se han medido mejoras de conversión ni impacto comercial.
+
+<h2 id="next">De la validación local a la publicación</h2>
+
+El proyecto sigue en desarrollo, sin demo ni repositorio públicos. Están pendientes la publicación y los límites globales de solicitudes de formularios. La vista previa del portfolio es una imagen del configurador, no una afirmación de que la web del estudio ya esté publicada.

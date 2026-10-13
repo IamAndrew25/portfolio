@@ -1,0 +1,31 @@
+<h2 id="problem">El problema</h2>
+
+¿Puede una CNN distinguir rostros reales y sintéticos en un dataset controlado? Responder requiere más que una puntuación de entrenamiento: hacen falta etiquetas documentadas, particiones fijas y un conjunto de prueba que no influya en la selección del modelo.
+
+Es un proyecto académico. Mi contribución se concentra en el protocolo de particiones y la CNN base. La nueva iteración se reconstruye desde la preparación de datos, antes de comparar modelos de transferencia.
+
+<h2 id="decisions">La evaluación forma parte del sistema</h2>
+
+### Fijar el experimento antes de cambiar el modelo
+
+RVF10K contiene 5.000 rostros reales procedentes de FFHQ/NVIDIA y 5.000 sintéticos de StyleGAN. Un manifiesto asigna 7.000 imágenes a entrenamiento, 1.500 a validación y 1.500 a prueba. Estas asignaciones permiten comparar experimentos.
+
+### Separar selección y evaluación
+
+La validación orienta la selección del modelo. El conjunto de prueba se reserva para la evaluación final, no para decidir arquitecturas, épocas o hiperparámetros. Precision, recall y F1 por clase complementan accuracy.
+
+### Establecer primero la línea base
+
+La referencia es una CNN propia. La comparación con VGG-19, ResNet y MobileNet está prevista bajo el mismo protocolo; no se presenta como experimentación completada.
+
+<h2 id="validation">Resultado histórico, alcance explícito</h2>
+
+El experimento anterior reportó **76,27 % de accuracy en test**, con precision, recall y F1 cercanos a 0,76 para ambas clases. Su notebook, informe y manifiesto están versionados en un repositorio privado.
+
+La cifra corresponde al experimento anterior, **no a la reconstrucción actual**. Mide el desempeño en este dataset controlado y no demuestra robustez ante generadores nuevos, compresión o rostros de otra distribución.
+
+<h2 id="next">La reproducibilidad incluye los artefactos</h2>
+
+El checkpoint anterior se guardó en el sistema de archivos temporal de Colab y no se preservó. Esto limita la reproducción a partir de los pesos y obliga a reentrenar.
+
+El siguiente paso es auditar otra vez rutas, etiquetas y particiones, reconstruir la CNN, preservar el checkpoint y después comparar modelos. En esta etapa no existe una demo pública de inferencia.

@@ -1,0 +1,35 @@
+<h2 id="problem">El problema</h2>
+
+El reto Junior AI Engineer de Orexe incluía seis documentos para una base de conocimiento financiera. El objetivo era permitir que un analista hiciera preguntas y revisara el material utilizado para generar una respuesta, sin buscar manualmente en informes y manuales operativos.
+
+Construí la API RAG Nexo Andino alrededor de ese flujo. Es un proyecto de reto técnico con implementación pública, no un producto bancario desplegado.
+
+<h2 id="decisions">Construir el sistema alrededor de la respuesta</h2>
+
+### Separar ingesta, recuperación y generación
+
+Las rutas FastAPI gestionan el contrato HTTP. Módulos específicos cargan archivos PDF, Markdown y texto, dividen el contenido, almacenan embeddings en Chroma y recuperan pasajes mediante relevancia marginal máxima. Un flujo LangChain entrega ese contexto a Gemini.
+
+Esta separación permite probar los endpoints sin consumir llamadas al modelo e inspeccionar la recuperación por separado del texto generado.
+
+### Incluir las fuentes en la respuesta
+
+La respuesta contiene el texto generado y una lista de fuentes con nombres de documentos, identificadores de fragmentos y extractos. Son los pasajes recuperados que recibió el modelo; no demuestran que cada frase generada sea correcta. Aportan evidencia concreta para revisar.
+
+### Reforzar la implementación inicial
+
+La revisión posterior incorporó acceso mediante una API key compartida para documentos y preguntas, validación de nombres e IDs, límites de carga y mensajes de error genéricos para el cliente. Las operaciones síncronas del modelo y almacenamiento utilizan un pool de hilos en las rutas asíncronas correspondientes.
+
+Los IDs estables permiten repetir la indexación. Primero se añaden los nuevos fragmentos y después se retiran los obsoletos, evitando borrar el documento anterior antes de generar sus embeddings. Esto no equivale a una transacción de actualización de todo el corpus.
+
+<h2 id="validation">Un backend verificable, con alcance definido</h2>
+
+La revisión `6381c60` aprobó **19 pruebas automatizadas** de autenticación, validación de cargas y preguntas, respuestas ante fallos de indexación, conteo documental, IDs estables e inicio autenticado. Las pruebas aíslan los servicios externos: son evidencia de regresión, no una medición de exactitud de respuestas o carga de producción.
+
+El proyecto incluye Docker y un script de inicio. El repositorio documenta las claves independientes `GEMINI_API_KEY` y `API_KEY` necesarias para ejecutar el servicio.
+
+<h2 id="next">Límites y próximos pasos</h2>
+
+La verificación completa del despliegue requiere Docker, credenciales reales y conexión al proveedor. Las colecciones anteriores a la revisión de IDs estables necesitan reconstruirse una vez. Las dependencias de Google y LangChain también requieren una actualización probada por separado.
+
+El siguiente paso útil es evaluar preguntas financieras con evidencia esperada, incluyendo preguntas sin respuesta en el corpus. Eso permitiría medir recuperación y calidad de respuesta; las pruebas de endpoints no bastan para demostrar ninguna de las dos.

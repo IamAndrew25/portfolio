@@ -1,0 +1,31 @@
+<h2 id="problem">The problem</h2>
+
+OpenCode accepts text prompts. I wanted to speak an instruction and deliver the transcription to the same workflow, without manually moving text between a recorder, a transcription tool and the editor.
+
+The engineering challenge was the handoff: deciding when recording ends, handling a remote transcription request and ensuring the command returns only the prompt.
+
+<h2 id="decisions">Small boundaries. Clear responsibilities.</h2>
+
+### Keep transcription independent
+
+`groq-stt.ts` exposes `transcribe(audioPath)`. It accepts an audio file and returns text; it does not know about OpenCode. This also makes it possible to test transcription using a saved recording.
+
+### Use the terminal as a contract
+
+`voz.ts` orchestrates recording and transcription. Progress messages go to `stderr`; the transcript goes to `stdout`. The `/voz` command can consume that output without filtering out log messages.
+
+### Make recording conditions explicit
+
+ffmpeg captures mono audio at 16 kHz. Silence detection uses a −35 dB threshold and a three-second window, with an initial four-second guard. These are configuration choices, not measured latency or quality claims.
+
+<h2 id="validation">What can be verified</h2>
+
+The public repository contains the recording orchestrator, transcription adapter, command installer and setup documentation. Its integration test sends the committed `voz.wav` fixture to Groq and checks the Spanish transcript.
+
+That test depends on network access and an API key. It verifies one fixture against the service; it does not establish accuracy across speakers, accents or noisy environments. No speed improvement or transcription-accuracy benchmark is claimed here.
+
+<h2 id="next">Limits & next steps</h2>
+
+The current recording path uses macOS `avfoundation` and a configurable microphone index. Transcription depends on an external service, its rate limits and the network. Audio is sent to Groq rather than processed entirely on-device.
+
+Useful next steps are broader audio fixtures, bounded request timeouts, cleanup on failure and a more portable recording adapter. The portfolio's interactive diagram explains the existing implementation; it does not record audio or call the model.

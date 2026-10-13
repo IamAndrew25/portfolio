@@ -1,0 +1,37 @@
+<h2 id="problem">The problem</h2>
+
+I wanted to understand how an agent moves beyond a single prompt. Code review gave the experiment a concrete task: explore a folder, read source files and explain possible security issues with references to the code.
+
+The result is a small Python prototype. Its useful boundary is between model decisions and actual tool execution, not the length or confidence of its final report.
+
+<h2 id="decisions">Let the model choose. Keep execution explicit.</h2>
+
+### Two tools, one permitted root
+
+`tools.py` registers only `list_files` and `read_file`. Requested paths are resolved and checked against `target_project` before reading. The model cannot request arbitrary Python functions through this dispatcher, and the tools expose neither writes nor shell execution.
+
+That path check is an application-level boundary, not an operating-system sandbox. Files placed inside the target folder are available to the reviewer.
+
+### Keep the loop visible
+
+`agent.py` sends messages and tool schemas to an OpenAI-compatible endpoint. When the model asks for a tool, Python executes it and returns the result with the matching call ID. The next model turn sees both the request and its result.
+
+The loop stops when the model returns without tool calls, or after ten model turns. One turn may request multiple tools. File responses contain the first 5,000 characters; the current implementation reads the file into memory before slicing it.
+
+### Make the model endpoint configurable
+
+The original run used Qwen through a local server. `OPENAI_BASE_URL`, `OPENAI_API_KEY` and `MODEL` let another developer supply a compatible endpoint. Using the OpenAI SDK does not require an OpenAI-hosted model. A remote endpoint receives the source content supplied through tool results.
+
+<h2 id="validation">Useful findings and false positives</h2>
+
+The repository includes an intentionally vulnerable fixture and `try_tools.py`, a smoke-check script for listing, reading and rejecting a path outside the root.
+
+In a manual trial against my financial RAG project, the agent identified filename traversal, unbounded uploads, exposed errors and missing endpoint authentication. It also produced weakly supported claims about environment files and local Chroma authentication, and missed another traversal path.
+
+That comparison showed that the agent loop works and that report quality still needs improvement. It is not a measured detection-rate benchmark or a substitute for a security audit.
+
+<h2 id="next">Limits & next steps</h2>
+
+Directory listings are not recursive and long files are truncated without pagination, so larger repositories may be only partially inspected. There is no persistent review memory or automatic patching.
+
+Next steps are paginated reads, clearer coverage reporting, code excerpts for each finding and a labeled set of vulnerable and safe examples. Those would make precision and missed findings measurable rather than judging the agent by how convincing it sounds.

@@ -1,0 +1,83 @@
+import type { Locale } from "./locales";
+
+const en = {
+    skip: "Skip to content", work: "Work", approach: "Approach", about: "About", contact: "Let's talk", resume: "Résumé",
+    available: "Open to AI engineering opportunities", name: "Andres Obispo Calla",
+    tagline: "Software Engineer building reliable systems that integrate AI where it solves a real problem, from data and model evaluation to backend integration.",
+    viewWork: "Explore my work", intro: "Engineering is the foundation. AI is the focus.",
+    featured: "Featured project", selected: "Selected work", workTitle: "Ideas, engineered.",
+    selectedSystem: "Selected system", showcaseNote: "From documents to decisions.", scrollExplore: "Scroll to explore",
+    systemLayers: "Data / Model / Product", depthHint: "Move your cursor to explore",
+    insideBuild: "Inside the build", buildVerifyLearn: "Build / Verify / Learn",
+    workDescription: "A closer look at what I build, the decisions behind it, and the evidence that matters.",
+    allProjects: "All projects", caseStudy: "Read case study", source: "View source", publicCode: "Public source", privateCode: "Private repository", unavailableCode: "Source not published",
+    inProgress: "In progress", maintained: "Working integration", liveDemo: "Live demo", role: "My contribution", stack: "Built with",
+    outcome: "The outcome", evidence: "The evidence", approachLabel: "The approach", resultLabel: "Outcome / Evidence / Approach",
+    explore: "Explore the system", exploreDescription: "Open a stage to see how it works and why it was designed this way.",
+    decision: "Engineering decision", implementation: "See implementation", documented: "Implementation walkthrough · not a live inference demo",
+    problem: "Problem", decisions: "Decisions", validation: "Validation", next: "Next steps", onThisPage: "In this case study",
+    back: "Back to projects", nextProject: "Next case study", evidenceTitle: "Evidence over adjectives.",
+    approachTitle: "Beyond the model.", approachDescription: "The useful part is the whole system: how data enters, how decisions are tested, and how the result reaches a person.",
+    principles: [
+        { title: "Start with the problem.", description: "Understand the workflow and constraints before choosing a model or a framework.", tag: "01 / CONTEXT" },
+        { title: "Design the boundaries.", description: "Keep responsibilities clear: data, model, integration and interface.", tag: "02 / SYSTEMS" },
+        { title: "Make it verifiable.", description: "Use repeatable evaluation, test real behavior and document what is still unknown.", tag: "03 / EVIDENCE" },
+    ],
+    aboutLabel: "The person behind the systems", aboutTitle: "Curious by nature.\nAn engineer by practice.",
+    workspaceCaption: "Where the work happens", workspaceAlt: "My desk with a laptop, an external monitor and a keyboard",
+    aboutBody: "I'm Andres, a Software Engineering student at Universidad Tecnológica del Perú in Lima, focused on applied AI. My projects include RAG APIs, voice integrations, computer-vision experiments and interactive websites. I care about understanding the system around a model as much as the model itself.",
+    aboutSecond: "My background also includes Python, PostgreSQL and training in leadership and entrepreneurship through Aspire Institute. I'm looking for a team where I can contribute, ask good questions and keep growing as an AI engineer.",
+    now: "Currently exploring", nowText: "Reproducible computer-vision evaluation and practical AI integrations.",
+    contactLabel: "Have a problem worth solving?", contactTitle: "Let's build\nsomething useful.", contactBody: "Open to AI engineering roles and thoughtful software projects. I'd love to hear what you're working on.",
+    email: "Send an email", footer: "Built with intention. Open to what's next.",
+    visualLabel: "Workflow illustration", visionLabel: "Evaluation protocol", roomLabel: "Configurator image · Trilinea Arquitectura",
+    print: "Print / Save as PDF", resumeTitle: "Résumé", resumeNote: "A concise profile drawn from the projects in this portfolio.",
+    resumeEducation: "Education", resumeProjects: "Selected AI projects", resumeSkills: "Technical skills", resumeCredentials: "Certifications & training",
+    resumeLanguages: "Languages", resumeAdditional: "More engineering work",
+    profile: "Profile", education: "Education & learning", educationText: "Software Engineering student · Leadership and entrepreneurship training, Aspire Institute.",
+    notFound: "This page took a different path.", notFoundBody: "The project may have moved, or this address doesn't exist.", home: "Back to home",
+} as const;
+
+type Messages = { [Key in keyof typeof en]: (typeof en)[Key] extends string ? string : readonly { title: string; description: string; tag: string }[] };
+
+const es: Messages = {
+    skip: "Saltar al contenido", work: "Proyectos", approach: "Enfoque", about: "Sobre mí", contact: "Hablemos", resume: "CV",
+    available: "Buscando oportunidades en ingeniería de IA", name: "Andres Obispo Calla",
+    tagline: "Ingeniero de software que construye sistemas confiables e integra IA donde resuelve un problema real, desde los datos y la evaluación de modelos hasta la integración backend.",
+    viewWork: "Explorar proyectos", intro: "La ingeniería es la base. La IA, el enfoque.",
+    featured: "Proyecto destacado", selected: "Trabajo seleccionado", workTitle: "Ideas hechas sistemas.",
+    selectedSystem: "Sistema destacado", showcaseNote: "De los documentos a las decisiones.", scrollExplore: "Explora los proyectos",
+    systemLayers: "Datos / Modelo / Producto", depthHint: "Explora la perspectiva con el cursor",
+    insideBuild: "Dentro del proyecto", buildVerifyLearn: "Construir / Verificar / Aprender",
+    workDescription: "Qué construyo, las decisiones que tomo y la evidencia que respalda cada proyecto.",
+    allProjects: "Todos los proyectos", caseStudy: "Ver caso de estudio", source: "Ver código", publicCode: "Código público", privateCode: "Repositorio privado", unavailableCode: "Código no publicado",
+    inProgress: "En progreso", maintained: "Integración funcional", liveDemo: "Ver demo", role: "Mi contribución", stack: "Tecnologías",
+    outcome: "El resultado", evidence: "La evidencia", approachLabel: "El enfoque", resultLabel: "Resultado / Evidencia / Enfoque",
+    explore: "Explorar el sistema", exploreDescription: "Abre una etapa para conocer cómo funciona y por qué se diseñó así.",
+    decision: "Decisión de ingeniería", implementation: "Ver implementación", documented: "Recorrido de implementación · no es una demo de inferencia",
+    problem: "Problema", decisions: "Decisiones", validation: "Validación", next: "Próximos pasos", onThisPage: "En este caso",
+    back: "Volver a proyectos", nextProject: "Siguiente caso", evidenceTitle: "Evidencia, más que adjetivos.",
+    approachTitle: "Más allá del modelo.", approachDescription: "Lo útil es el sistema completo: cómo llegan los datos, cómo se validan las decisiones y cómo recibe una persona el resultado.",
+    principles: [
+        { title: "Entender el problema.", description: "Comprender el flujo de trabajo y sus restricciones antes de elegir un modelo o framework.", tag: "01 / CONTEXTO" },
+        { title: "Diseñar los límites.", description: "Separar responsabilidades: datos, modelo, integración e interfaz.", tag: "02 / SISTEMAS" },
+        { title: "Hacerlo verificable.", description: "Evaluar de forma repetible, probar comportamientos reales y documentar lo que falta conocer.", tag: "03 / EVIDENCIA" },
+    ],
+    aboutLabel: "La persona detrás de los sistemas", aboutTitle: "Curiosidad por naturaleza.\nIngeniería en la práctica.",
+    workspaceCaption: "Donde construyo", workspaceAlt: "Mi escritorio con una laptop, un monitor externo y un teclado",
+    aboutBody: "Soy Andres, estudiante de Ingeniería de Software en la Universidad Tecnológica del Perú, en Lima, enfocado en IA aplicada. Mis proyectos incluyen APIs RAG, integraciones de voz, experimentos de visión por computadora y sitios interactivos. Me interesa entender el sistema alrededor de un modelo tanto como el propio modelo.",
+    aboutSecond: "Mi formación también incluye Python, PostgreSQL y liderazgo y emprendimiento mediante Aspire Institute. Busco un equipo donde aportar, hacer buenas preguntas y seguir creciendo en ingeniería de IA.",
+    now: "Actualmente explorando", nowText: "Evaluación reproducible en visión por computadora e integraciones prácticas de IA.",
+    contactLabel: "¿Hay un problema que vale la pena resolver?", contactTitle: "Construyamos\nalgo útil.", contactBody: "Busco oportunidades en ingeniería de IA y proyectos de software con propósito. Me gustaría conocer en qué estás trabajando.",
+    email: "Enviar un correo", footer: "Construido con intención. Abierto a lo que sigue.",
+    visualLabel: "Ilustración del flujo", visionLabel: "Protocolo de evaluación", roomLabel: "Imagen del configurador · Trilinea Arquitectura",
+    print: "Imprimir / Guardar como PDF", resumeTitle: "Currículum", resumeNote: "Perfil resumido a partir de los proyectos de este portfolio.",
+    resumeEducation: "Educación", resumeProjects: "Proyectos de IA seleccionados", resumeSkills: "Habilidades técnicas", resumeCredentials: "Certificaciones y formación",
+    resumeLanguages: "Idiomas", resumeAdditional: "Más proyectos de ingeniería",
+    profile: "Perfil", education: "Formación y aprendizaje", educationText: "Estudiante de Ingeniería de Software · Formación en liderazgo y emprendimiento, Aspire Institute.",
+    notFound: "Esta página tomó otro camino.", notFoundBody: "Es posible que el proyecto se haya movido o que esta dirección no exista.", home: "Volver al inicio",
+};
+
+export function getMessages(locale: Locale): Messages {
+    return locale === "en" ? en : es;
+}

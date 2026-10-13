@@ -1,0 +1,31 @@
+<h2 id="problem">El problema</h2>
+
+OpenCode recibe instrucciones de texto. Quería dictar una instrucción y entregar su transcripción al mismo flujo, sin trasladar texto manualmente entre una grabadora, una herramienta de transcripción y el editor.
+
+El reto de ingeniería estaba en la integración: decidir cuándo terminar la grabación, gestionar una solicitud remota de transcripción y garantizar que el comando devolviera únicamente el prompt.
+
+<h2 id="decisions">Límites pequeños. Responsabilidades claras.</h2>
+
+### Separar la transcripción
+
+`groq-stt.ts` expone `transcribe(audioPath)`. Recibe un archivo de audio y devuelve texto; no conoce OpenCode. Esto también permite probar la transcripción con una grabación guardada.
+
+### Usar la terminal como contrato
+
+`voz.ts` coordina grabación y transcripción. Los mensajes de progreso van a `stderr`; el texto transcrito va a `stdout`. El comando `/voz` consume esa salida sin tener que filtrar mensajes de registro.
+
+### Definir las condiciones de grabación
+
+ffmpeg captura audio mono a 16 kHz. La detección de silencio utiliza un umbral de −35 dB y una ventana de tres segundos, con un margen inicial de cuatro segundos. Son decisiones de configuración, no mediciones de latencia ni afirmaciones de calidad.
+
+<h2 id="validation">Qué se puede verificar</h2>
+
+El repositorio público contiene el orquestador de grabación, el adaptador de transcripción, el instalador del comando y la documentación. Su prueba de integración envía el audio versionado `voz.wav` a Groq y comprueba la transcripción en español.
+
+La prueba requiere red y una clave de API. Verifica un audio contra el servicio; no demuestra precisión para todos los hablantes, acentos o entornos ruidosos. Aquí no se atribuye una mejora de velocidad ni un benchmark de precisión.
+
+<h2 id="next">Límites y próximos pasos</h2>
+
+La grabación actual usa `avfoundation` en macOS y un índice de micrófono configurable. La transcripción depende de un servicio externo, sus límites de uso y la conexión. El audio se envía a Groq; no se procesa completamente en el dispositivo.
+
+Las siguientes mejoras serían ampliar los audios de prueba, limitar el tiempo de las solicitudes, limpiar archivos ante fallos y hacer portable el adaptador de grabación. El diagrama interactivo del portfolio explica la implementación: no graba audio ni llama al modelo.

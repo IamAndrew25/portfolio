@@ -1,0 +1,35 @@
+<h2 id="problem">The problem</h2>
+
+The Orexe Junior AI Engineer challenge supplied six documents for a financial knowledge base. The goal was to let an analyst ask a question and inspect the material used to generate an answer, rather than manually search reports and operational manuals.
+
+I built the Nexo Andino RAG API around that workflow. It is a technical-challenge project with a public implementation, not a deployed banking product.
+
+<h2 id="decisions">Build the system around the answer</h2>
+
+### Separate ingestion, retrieval and generation
+
+FastAPI routes handle the HTTP contract. Dedicated modules load PDF, Markdown and text files, split content, persist embeddings in Chroma and retrieve passages with maximum marginal relevance. A LangChain pipeline provides that context to Gemini.
+
+This separation makes it possible to test endpoint behavior without paying for a model call, and to inspect retrieval independently of the generated wording.
+
+### Make sources part of the response
+
+The response contains an answer and a source list with document names, chunk identifiers and excerpts. These are the retrieved passages supplied to the model, not a proof that every generated sentence is correct. They give a reader something concrete to check.
+
+### Harden the first implementation
+
+The follow-up revision added shared API-key access to document and question routes, filename and document-ID validation, bounded uploads and generic client-facing errors. Synchronous model and storage operations use a thread pool in the affected async routes.
+
+Stable IDs support repeat indexing. New chunks are added before obsolete IDs are removed, so an embedding failure does not require deleting the old document first. This is not a transaction across a complete corpus update.
+
+<h2 id="validation">A testable backend, with a defined scope</h2>
+
+Revision `6381c60` passed **19 automated tests** covering endpoint authentication, upload and question validation, indexing failure responses, document counts, stable IDs and authenticated startup seeding. The tests isolate external services; this is regression evidence, not a benchmark of answer accuracy or production load.
+
+Docker packaging and a startup script are included. The repository documents the separate `GEMINI_API_KEY` and application `API_KEY` needed to run the service.
+
+<h2 id="next">Limits & next steps</h2>
+
+A full deployment check still requires Docker, real provider credentials and network access. Collections created before the stable-ID revision need a one-time rebuild. The current Google and LangChain dependencies also need a separately tested upgrade.
+
+The next useful evaluation is a set of financial questions with expected evidence, including unanswerable questions. That would measure retrieval and answer quality; passing endpoint tests alone cannot establish either.

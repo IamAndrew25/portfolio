@@ -1,0 +1,37 @@
+<h2 id="problem">El problema</h2>
+
+Quería comprender cómo un agente va más allá de enviar un solo prompt. La revisión de código dio al experimento una tarea concreta: explorar una carpeta, leer archivos y explicar posibles problemas de seguridad con referencias al código.
+
+El resultado es un prototipo pequeño en Python. Su límite más importante separa las decisiones del modelo de la ejecución real de herramientas, no la extensión o seguridad aparente de su informe.
+
+<h2 id="decisions">El modelo decide. La ejecución es explícita.</h2>
+
+### Dos herramientas y una raíz permitida
+
+`tools.py` registra únicamente `list_files` y `read_file`. Las rutas solicitadas se resuelven y se comprueban contra `target_project` antes de leer. Este despachador no permite solicitar funciones arbitrarias de Python; las herramientas tampoco exponen escritura ni ejecución de comandos.
+
+La validación de rutas es un límite de la aplicación, no un aislamiento del sistema operativo. Los archivos colocados dentro de la carpeta objetivo están disponibles para el revisor.
+
+### Hacer visible el ciclo
+
+`agent.py` envía mensajes y esquemas de herramientas a un endpoint compatible con OpenAI. Cuando el modelo solicita una herramienta, Python la ejecuta y devuelve el resultado con el ID correspondiente. El siguiente turno del modelo recibe tanto la petición como su resultado.
+
+El ciclo termina cuando el modelo responde sin solicitar herramientas o después de diez turnos. Cada turno puede incluir varias llamadas. Se devuelven los primeros 5.000 caracteres de cada archivo; la implementación actual lee todo el archivo en memoria antes de recortarlo.
+
+### Configurar el proveedor del modelo
+
+La prueba inicial utilizó Qwen mediante un servidor local. `OPENAI_BASE_URL`, `OPENAI_API_KEY` y `MODEL` permiten configurar otro endpoint compatible. Usar el SDK de OpenAI no exige un modelo alojado en OpenAI. Un endpoint remoto recibe el código enviado mediante los resultados de las herramientas.
+
+<h2 id="validation">Hallazgos útiles y falsos positivos</h2>
+
+El repositorio incluye un ejemplo deliberadamente vulnerable y `try_tools.py`, un script básico para comprobar listado, lectura y rechazo de una ruta fuera de la raíz.
+
+En una prueba manual sobre mi API RAG financiera, el agente identificó traversal en nombres de archivo, cargas sin límite, errores internos expuestos y falta de autenticación. También produjo afirmaciones poco fundamentadas sobre archivos de entorno y autenticación de Chroma local, y omitió otra ruta de traversal.
+
+La comparación mostró que el ciclo funciona y que la calidad del informe todavía debe mejorar. No constituye una medición de tasa de detección ni sustituye una auditoría de seguridad.
+
+<h2 id="next">Límites y próximos pasos</h2>
+
+El listado no es recursivo y los archivos largos se recortan sin paginación, por lo que la inspección de repositorios grandes puede ser parcial. No hay memoria persistente de revisiones ni corrección automática de código.
+
+Los siguientes pasos son lectura por páginas, cobertura explícita, fragmentos de código para justificar cada hallazgo y un conjunto etiquetado de ejemplos vulnerables y seguros. Esto permitiría medir precisión y omisiones en lugar de evaluar al agente por lo convincente que resulta.

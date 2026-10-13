@@ -1,0 +1,31 @@
+<h2 id="problem">The problem</h2>
+
+Can a CNN distinguish real faces from synthetic faces in a controlled dataset? Answering that question requires more than a training score. The experiment needs documented labels, fixed splits and a test set that does not influence model selection.
+
+This is an academic project, with my contribution focused on the split protocol and custom CNN baseline. A new iteration is being rebuilt from data preparation before comparisons with transfer-learning models.
+
+<h2 id="decisions">Treat evaluation as part of the system</h2>
+
+### Fix the experiment before changing the model
+
+RVF10K contains 5,000 real faces sourced from FFHQ/NVIDIA and 5,000 synthetic StyleGAN faces. A manifest assigns 7,000 images to training, 1,500 to validation and 1,500 to test. Those assignments make experiments comparable.
+
+### Separate selection from evaluation
+
+Validation guides model selection. The test set is reserved for final evaluation, not for choosing architectures, epochs or hyperparameters. Class-level precision, recall and F1 complement accuracy.
+
+### Establish a baseline first
+
+A custom CNN is the reference. VGG-19, ResNet and MobileNet comparisons are planned under the same protocol; they are not presented as completed experiments.
+
+<h2 id="validation">Historical result, explicit scope</h2>
+
+The previous experiment reported **76.27% test accuracy**, with precision, recall and F1 around 0.76 for both classes. Its notebook, report and partition manifest are versioned in a private repository.
+
+That number belongs to the previous experiment, **not the current rebuild**. It measures performance on this controlled dataset and does not establish robustness to newer generators, compression or faces from a different distribution.
+
+<h2 id="next">Reproducibility includes the artifacts</h2>
+
+The earlier model checkpoint was saved in Colab's temporary filesystem and was not preserved. That limits reproduction from saved weights and makes retraining necessary.
+
+The next step is to audit paths, labels and partitions again, rebuild the CNN, preserve its checkpoint and only then compare models. No public inference demo is available at this stage.

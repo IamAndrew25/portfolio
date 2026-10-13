@@ -1,0 +1,229 @@
+/* The wrapper stays flat for pointer geometry; its child owns the 3D space. */
+.depth-scene {
+    --tilt-x: 0deg;
+    --tilt-y: 0deg;
+    --rest-x: 0deg;
+    --rest-y: 0deg;
+    --rest-z: 0deg;
+    --light-x: 50%;
+    --light-y: 30%;
+    --depth-radius: 9px;
+    position: relative;
+    min-width: 0;
+    perspective: 1400px;
+}
+
+.depth-surface {
+    position: relative;
+    height: 100%;
+    border-radius: var(--depth-radius);
+    transform-style: preserve-3d;
+    transform: rotateX(calc(var(--rest-x) + var(--tilt-x))) rotateY(calc(var(--rest-y) + var(--tilt-y))) rotateZ(var(--rest-z));
+    transition: transform 420ms cubic-bezier(.2, .7, .2, 1);
+}
+
+.depth-surface::before {
+    content: "";
+    position: absolute;
+    inset: 0;
+    pointer-events: none;
+    border-radius: inherit;
+    background: linear-gradient(150deg, #5b5148, #29231f 45%, #100e0d);
+    transform: translate3d(0, 7px, -9px);
+    box-shadow: 0 20px 34px #0003, 0 4px 7px #0005;
+}
+
+.depth-surface::after {
+    content: "";
+    position: absolute;
+    inset: 0;
+    pointer-events: none;
+    border-radius: inherit;
+    background: radial-gradient(ellipse at var(--light-x) var(--light-y), #e6ddd11c, transparent 60%);
+    opacity: 0;
+    transform: translateZ(1px);
+    transition: opacity 300ms ease;
+}
+
+.depth-scene[data-depth-active="true"] > .depth-surface { will-change: transform; }
+.depth-scene[data-depth-active="true"] > .depth-surface::after { opacity: 1; }
+
+/* Layered hardware-like hero: backing plate, terminal, foreground label and chip. */
+.hero-showcase-depth { padding: 65px 12px 0 0; }
+.hero-showcase-depth .showcase-coordinate { top: 0; left: 0; }
+.hero-depth { --rest-x: 9deg; --rest-y: -14deg; --rest-z: 2deg; --depth-radius: 14px; z-index: 1; }
+.hero-depth > .depth-surface::before { transform: translate3d(0, 14px, -16px); box-shadow: 10px 30px 42px #0008; }
+.hero-depth > .depth-surface::after { display: none; }
+
+.showcase-backplate {
+    position: absolute;
+    inset: -15px -12px;
+    border: 1px solid #bba88c54;
+    border-radius: 18px;
+    background: linear-gradient(130deg, #61554a, #342d28 35%, #27201f);
+    box-shadow: inset 1px 1px 0 #e6ddd14a, inset -2px -2px 0 #0f0d0c;
+    transform: translate3d(14px, -8px, -40px);
+}
+
+.hero-depth .showcase-card {
+    z-index: auto;
+    overflow: visible;
+    transform-style: preserve-3d;
+    transform: translateZ(0);
+    border-radius: 14px;
+    border: 1px solid #c1afc452;
+    background: linear-gradient(150deg, #393038, #241f25);
+    box-shadow: inset 1px 1px 0 #ffffff20, inset -1px -1px 0 #0009;
+}
+
+.hero-depth .voice-visual {
+    overflow: visible;
+    transform-style: preserve-3d;
+    transform: translateZ(0);
+    aspect-ratio: auto;
+    padding-block: 26px 44px;
+    border-radius: 14px 14px 0 0;
+    background: radial-gradient(ellipse at 20% 0%, #85729847, transparent 65%), #2a2430;
+}
+
+.hero-depth .voice-window {
+    transform: translate3d(-3px, -9px, 34px);
+    background: linear-gradient(145deg, #28212f, #17151d 70%);
+    border-color: #9b85ad73;
+    box-shadow: 0 2px 0 #695a75, 0 5px 0 #352b3c, 5px 20px 26px #0007, inset 0 1px 0 #e6ddd133;
+}
+
+.hero-depth .showcase-link {
+    position: relative;
+    border-radius: 0 0 14px 14px;
+    background: linear-gradient(120deg, #342b32, #242022);
+    border-top: 1px solid #c1afc425;
+    transform: translateZ(10px);
+    box-shadow: 0 8px 0 -4px #181417;
+}
+
+.hero-depth .waveform i {
+    opacity: 1;
+    background: linear-gradient(90deg, #837093, #cfb4e8 60%, #9981b0);
+    box-shadow: 2px 2px 0 #49394f, 0 0 10px #b7a3d81a;
+}
+
+.showcase-chip {
+    position: absolute;
+    top: -39px;
+    right: 24px;
+    width: 72px;
+    height: 72px;
+    transform-style: preserve-3d;
+    transform: translateZ(68px) rotateX(19deg) rotateY(-15deg) rotateZ(-14deg);
+    pointer-events: none;
+}
+
+.chip-top {
+    position: absolute;
+    inset: 0;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    font-size: 27px;
+    letter-spacing: -.06em;
+    color: #352c25;
+    background: linear-gradient(135deg, #e0d1b9, #bba68a 65%, #a08a71);
+    border: 1px solid #f7e9d39c;
+    border-radius: 8px;
+    box-shadow: inset 0 0 0 5px #352c2517, 9px 18px 24px #0006;
+    transform: translateZ(7px);
+}
+
+.chip-top > span { font-family: var(--font-geist-mono), monospace; font-size: 5px; letter-spacing: .11em; }
+.chip-front { position: absolute; left: 0; top: 29px; width: 72px; height: 14px; background: linear-gradient(#a58f77, #5e4e40); transform: translateY(36px) rotateX(-90deg); }
+.chip-side { position: absolute; left: 29px; top: 0; width: 14px; height: 72px; background: #74604d; transform: translateX(36px) rotateY(90deg); }
+
+.showcase-layer-label {
+    position: absolute;
+    bottom: 66px;
+    right: -12px;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 10px 13px;
+    border: 1px solid #b8a4cf73;
+    border-radius: 6px;
+    background: linear-gradient(130deg, #4e4059, #342b3e);
+    box-shadow: 0 3px 0 #251d2c, 3px 10px 18px #0005, inset 0 1px 0 #ffffff18;
+    color: #e8dbee;
+    font-family: var(--font-geist-mono), monospace;
+    font-size: 8px;
+    letter-spacing: .03em;
+    transform: translateZ(56px);
+    pointer-events: none;
+}
+
+.layer-symbol { display: flex; align-items: end; gap: 3px; height: 17px; }
+.layer-symbol i { width: 4px; height: 60%; border: 1px solid #d8c3ed; background: #b7a3d859; box-shadow: 2px 2px 0 #201a29; }
+.layer-symbol i:nth-child(2) { height: 100%; }
+.layer-symbol i:nth-child(3) { height: 80%; }
+.hero-showcase-depth .showcase-note { margin-top: 40px; }
+.depth-hint { visibility: hidden; margin-top: 14px; text-align: right; font-size: 8px; color: var(--muted); }
+.hero-depth[data-depth-motion="enabled"] ~ .depth-hint { visibility: visible; }
+
+.showcase-stage { position: absolute; inset: 20px -12px -18px -12px; pointer-events: none; perspective: 950px; overflow: clip; }
+.stage-halo { position: absolute; inset: -25px -20px 10px; border-radius: 50%; background: radial-gradient(ellipse, #b7a3d80d, transparent 67%); }
+.stage-floor { position: absolute; left: 3%; right: 0; bottom: 0; height: 40%; border-radius: 50%; border: 1px solid #bfae9824; background: radial-gradient(ellipse at 50% 50%, #bfae9814, transparent 70%); transform: rotateX(64deg); }
+.stage-shadow { position: absolute; left: 8%; right: 4%; bottom: 12%; height: 20%; border-radius: 50%; background: radial-gradient(ellipse, #0009, transparent 70%); transform: rotateX(50deg); }
+
+/* Project text stays on one readable plane; the frame provides thickness. */
+.project-depth-featured { grid-column: 1 / -1; }
+.project-depth .project-card { height: 100%; border-color: #bfae9838; box-shadow: inset 0 1px 0 #ffffff0c; }
+.project-depth .project-card-copy { background: linear-gradient(125deg, #ffffff04, transparent 55%); }
+.project-depth .project-card:hover .project-visual { transform: none; }
+.project-depth .voice-window { transform: perspective(900px) rotateY(-6deg) rotateX(4deg); box-shadow: 0 3px 0 #695a7566, 0 6px 0 #352b3c, 10px 22px 30px #0004; }
+.project-depth .vision-frame { transform: perspective(700px) rotateY(10deg) rotateX(4deg); background: #c1b098; box-shadow: 3px 3px 0 #8e7d66, 6px 6px 0 #746652, 10px 15px 20px #302b262e; }
+.project-depth .architecture-visual .material-samples { box-shadow: 0 3px 0 #0f0c09, 4px 8px 14px #0006; }
+.project-depth .architecture-visual .room-hotspot { box-shadow: 0 3px 0 #6b6155, 0 7px 14px #0005, 0 0 0 8px #e6ddd115; }
+
+.workspace-depth { --rest-x: 2deg; --rest-y: 9deg; --rest-z: -2deg; --depth-radius: 5px; }
+.workspace-depth .workspace-photo { transform: none; border: 1px solid #baa78a80; padding: 10px; background: linear-gradient(145deg, #8d7b64, #514335 55%, #2a231d); box-shadow: inset 1px 1px 0 #ead9bd66, inset -1px -1px 0 #17130f; }
+.workspace-depth .workspace-photo img { border: 1px solid #17130f; }
+.workspace-depth .workspace-photo figcaption { box-shadow: 1px 3px 0 #15100c80, 3px 5px 10px #0005; }
+.workspace-depth > .depth-surface::before { transform: translate3d(6px, 7px, -12px); background: #41362b; }
+
+.hero-copy .hero-ai { text-shadow: 1px 1px 0 #837093, 2px 2px 0 #65566f, 3px 3px 0 #473c50, 8px 12px 18px #0004; }
+.hero-actions .button-primary { border-top-color: #e3d1f180; box-shadow: 0 3px 0 #766286, 0 9px 17px #0004, inset 0 1px 0 #e3d1f133; }
+.hero-actions .button-primary:active { transform: translateY(2px); box-shadow: 0 1px 0 #766286, 0 4px 8px #0003; }
+.case-cover { border: 1px solid #bfae9838; box-shadow: 0 5px 0 #131110, 0 18px 35px #0003; }
+
+@media (max-width: 1050px) {
+    .hero-depth { --rest-y: -10deg; --rest-x: 7deg; }
+    .hero-showcase-depth { padding-right: 5px; }
+    .showcase-chip { right: 20px; top: -43px; }
+    .showcase-layer-label { right: -5px; bottom: 60px; font-size: 7px; padding: 8px 10px; }
+}
+
+@media (max-width: 700px) {
+    .hero-showcase-depth { padding-top: 67px; padding-right: 8px; margin-top: 55px; }
+    .hero-showcase-depth .showcase-coordinate { top: 4px; }
+    .hero-depth { --rest-x: 5deg; --rest-y: -8deg; --rest-z: 1deg; perspective: 1200px; }
+    .hero-depth .voice-window { transform: translate3d(-2px, -7px, 18px); }
+    .showcase-backplate { inset: -10px -7px; transform: translate3d(6px, -5px, -25px); }
+    .showcase-chip { top: -38px; right: 18px; transform: translateZ(30px) rotateX(19deg) rotateY(-15deg) rotateZ(-14deg) scale(.85); }
+    .showcase-layer-label { right: -4px; bottom: 60px; transform: translateZ(25px); }
+    .hero-showcase-depth .showcase-note { margin-top: 28px; }
+    .depth-hint { display: none; }
+    .workspace-depth { --rest-y: 5deg; --rest-x: 1deg; }
+    .project-depth-featured { grid-column: auto; }
+}
+
+@media (hover: none), (pointer: coarse), (prefers-reduced-motion: reduce) {
+    .depth-hint { display: none; }
+    .depth-scene { --tilt-x: 0deg !important; --tilt-y: 0deg !important; }
+    .depth-surface { transition: none; }
+    .depth-surface::after { display: none; }
+}
+
+@media print {
+    .depth-scene { perspective: none; }
+    .depth-surface { transform: none; }
+    .depth-surface::before, .depth-surface::after { display: none; }
+}
